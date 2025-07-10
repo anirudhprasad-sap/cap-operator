@@ -10,7 +10,7 @@ env:
 
 jobs:
   build-on-label:
-    if: github.event.action == 'labeled' && github.event.label.name == env.LABEL_TRIGGER
+    if: github.event.action == 'labeled' && github.event.label.name == ${{ env.LABEL_TRIGGER }}
     strategy:
       matrix:
         workload: ["controller", "server", "web-hooks"]
