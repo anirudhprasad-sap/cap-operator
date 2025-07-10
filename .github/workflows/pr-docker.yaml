@@ -78,7 +78,7 @@ jobs:
       env:
         IMAGE_REPO: ${{ env.REGISTRY }}/${{ github.repository }}/pr-image/${{ matrix.workload }}
         IMAGE_TAG: pr-${{ github.event.pull_request.number }}
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ github.token }}
       run: |
         echo "Trying to delete $IMAGE_REPO:$IMAGE_TAG"
 
