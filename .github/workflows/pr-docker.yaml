@@ -5,12 +5,11 @@ on:
     types: [labeled, closed]
 
 env:
-  LABEL_TRIGGER: build-docker
   REGISTRY: ghcr.io
 
 jobs:
   build-on-label:
-    if: github.event.action == 'labeled' && github.event.label.name == ${{ env.LABEL_TRIGGER }}
+    if: github.event.action == 'labeled' && github.event.label.name == 'build-docker'
     strategy:
       matrix:
         workload: ["controller", "server", "web-hooks"]
