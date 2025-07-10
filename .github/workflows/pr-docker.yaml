@@ -38,6 +38,14 @@ jobs:
         repository=$REGISTRY/${{ github.repository }}/pr-image/${{ matrix.workload }}
         echo "repository=${repository,,}" >> $GITHUB_OUTPUT
 
+    - name: Extract metadata (tags, labels) for Docker
+      id: extract-metadata
+      uses: docker/metadata-action@v5
+      with:
+        tags: |
+          type=raw,value=pr-${{ github.event.pull_request.number }}
+        images: ${{ steps.prepare-repository-name.outputs.repository }}
+
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
       with:
@@ -53,8 +61,8 @@ jobs:
           type=gha,scope=${{ matrix.workload }}-sha-${{ github.sha }},mode=max
           type=gha,scope=${{ github.ref_name }}-${{ matrix.workload }},mode=max
         push: true
-        tags: pr-${{ github.event.pull_request.number }}
-        labels: pr-${{ github.event.pull_request.number }}
+        tags: ${{ steps.extract-metadata.outputs.tags }}
+        labels: ${{ steps.extract-metadata.outputs.labels }}
 
   cleanup:
     if: github.event.action == 'closed'
