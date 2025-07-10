@@ -75,25 +75,7 @@ jobs:
       packages: write
     steps:
     - name: Delete image tag from GHCR
-      env:
-        IMAGE_REPO: ${{ env.REGISTRY }}/${{ github.repository }}/pr-image/${{ matrix.workload }}
-        IMAGE_TAG: pr-${{ github.event.pull_request.number }}
-        GH_TOKEN: ${{ github.token }}
-      run: |
-        echo "Trying to delete $IMAGE_REPO:$IMAGE_TAG"
-
-        # Convert repo to lowercase
-        IMAGE_REPO_LOWER=$(echo "$IMAGE_REPO" | tr '[:upper:]' '[:lower:]')
-        MANIFEST_DIGEST=$(curl -sSL -H "Authorization: Bearer $GH_TOKEN" \
-          -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-          "https://${{ env.REGISTRY }}/v2/${IMAGE_REPO_LOWER#${{ env.REGISTRY }}/}/manifests/$IMAGE_TAG" \
-          | jq -r '.config.digest')
-
-        if [[ "$MANIFEST_DIGEST" == null || -z "$MANIFEST_DIGEST" ]]; then
-          echo "No manifest found for $IMAGE_REPO_LOWER:$IMAGE_TAG"
-        else
-          echo "Deleting manifest $MANIFEST_DIGEST"
-          curl -X DELETE \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            "https://${{ env.REGISTRY }}/v2/${IMAGE_REPO_LOWER#${{ env.REGISTRY }}/}/manifests/$MANIFEST_DIGEST"
-        fi
+      uses: actions/delete-package-versions@v5
+      with:
+        package-name: pr-image/${{ matrix.workload }}
+        package-type: container
