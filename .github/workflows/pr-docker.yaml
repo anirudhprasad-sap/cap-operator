@@ -72,7 +72,7 @@ jobs:
     runs-on: ubuntu-22.04
     permissions:
       contents: read
-      packages: write
+      packages: delete
     steps:
     - name: Delete image tag from GHCR
       uses: actions/delete-package-versions@v5
