@@ -79,7 +79,7 @@ jobs:
     steps:
     - name: Delete PR image tag from GHCR
       env:
-        GH_TOKEN: ${{ github.token }}
+        GH_TOKEN: ${{ secrets.WKF_TOKEN }}
         PACKAGE_NAME: pr-image/${{ matrix.workload }}
         ORG: anirudhprasad-sap
         REPO: ${{ github.repository }}
