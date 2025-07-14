@@ -68,7 +68,7 @@ jobs:
     if: github.event.action == 'closed'
     strategy:
       matrix:
-      workload: ["controller", "server", "web-hooks"]
+        workload: ["controller", "server", "web-hooks"]
     runs-on: ubuntu-22.04
     permissions:
       contents: read
