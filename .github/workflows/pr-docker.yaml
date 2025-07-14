@@ -77,35 +77,11 @@ jobs:
       id-token: write
 
     steps:
-    - name: Delete PR image tag from GHCR
-      env:
-        GH_TOKEN: ${{ secrets.WKF_TOKEN }}
-        PACKAGE_NAME: pr-image/${{ matrix.workload }}
-        ORG: anirudhprasad-sap
-        REPO: ${{ github.repository }}
-        PR_NUMBER: ${{ github.event.pull_request.number }}
-      run: |
-        PACKAGE="cap-operator/${PACKAGE_NAME}"
-        PACKAGE_LOWER=$(echo "${PACKAGE}" | tr '[:upper:]' '[:lower:]')
-        TAG="pr-${PR_NUMBER}"
-
-        echo "Deleting GHCR image: $PACKAGE_LOWER:$TAG"
-
-        # Get the package version id for the tag
-        RESPONSE=$(curl -s -H "Accept: application/vnd.github+json" \
-          -H "Authorization: Bearer $GH_TOKEN" \
-          "https://api.github.com/orgs/${ORG}/packages/container/${PACKAGE_LOWER}/versions")
-        echo "API response: $RESPONSE"
-        VERSION_ID=$(echo "$RESPONSE" | jq -r ".[] | select(.metadata.container.tags[]? == \"${TAG}\") | .id")
-        echo "VERSION_ID: $VERSION_ID"
-
-        if [ -z "$VERSION_ID" ]; then
-          echo "No version found for tag $TAG in $PACKAGE_LOWER"
-          exit 0
-        fi
-
-        # Delete the package version
-        curl -L -X DELETE \
-          -H "Accept: application/vnd.github+json" \
-          -H "Authorization: Bearer $GH_TOKEN" \
-          "https://api.github.com/orgs/${ORG}/packages/container/${PACKAGE_LOWER}/versions/${VERSION_ID}"
+    - name: Delete older GHCR package versions for PR workload
+      uses: actions/delete-package-versions@v5
+      with:
+        package-name: cap-operator/pr-image/${{ matrix.workload }}
+        package-type: container
+        min-versions-to-keep: 0
+        delete-only-pre-release-versions: false
+        token: ${{ secrets.WKF_TOKEN }}
