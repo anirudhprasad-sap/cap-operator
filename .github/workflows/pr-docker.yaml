@@ -94,9 +94,9 @@ jobs:
         # Get the package version id for the tag
         VERSION_ID=$(curl -s -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer $GH_TOKEN" \
-          "https://api.github.com/orgs/${ORG}/packages/container/${PACKAGE_LOWER}/versions" \
-          | jq -r ".[] | select(.metadata.container.tags[]? == \"${TAG}\") | .id")
+          "https://api.github.com/orgs/${ORG}/packages/container/${PACKAGE_LOWER}/versions"
 
+        echo $VERSION_ID
         if [ -z "$VERSION_ID" ]; then
           echo "No version found for tag $TAG in $PACKAGE_LOWER"
           exit 0
