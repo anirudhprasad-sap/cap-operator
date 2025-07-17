@@ -30,7 +30,7 @@ jobs:
       with:
         registry: ${{ env.REGISTRY }}
         username: cap-operator-sap
-        password: ${{ github.token }}
+        password: ${{ secrets.CAP_OPERATOR_SAP_PKG_PUSH }}
 
     - name: Prepare repository name
       id: prepare-repository-name
