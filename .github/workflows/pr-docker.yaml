@@ -3,15 +3,13 @@ name: PR Docker Build
 on:
   pull_request:
     types: [labeled]
-  issue_comment:
-    types: [created]
 
 env:
   REGISTRY: ghcr.io
 
 jobs:
   build-on-label:
-    if: (github.event_name == 'pull_request' && github.event.action == 'labeled' && github.event.label.name == 'build-pr-images') || (github.event_name == 'issue_comment' && github.event.issue.pull_request != null && github.event.comment.body == '/rebuild-pr-images')
+    if: (github.event_name == 'pull_request' && github.event.action == 'labeled' && github.event.label.name == 'build-pr-images')
     strategy:
       matrix:
         workload: ["controller", "server", "web-hooks"]
