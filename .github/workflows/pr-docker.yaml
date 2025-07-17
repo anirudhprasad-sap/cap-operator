@@ -64,21 +64,25 @@ jobs:
         tags: ${{ steps.extract-metadata.outputs.tags }}
         labels: ${{ steps.extract-metadata.outputs.labels }}
     
-    - name: Add PR image info to workflow summary
-      if: success()
-      run: |
-        PR=${{ github.event.pull_request.number }}
-        IMAGE_BASE="ghcr.io/cap-operator-sap/pr-image"
+  summarize-images:
+    needs: build-on-label
+    if: success()
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Add PR image info to workflow summary
+        run: |
+          PR=${{ needs.build-on-label.outputs.pr-number }}
+          IMAGE_BASE="ghcr.io/cap-operator-sap/pr-image"
 
-        echo "### 🚀 Docker Images Built for PR #$PR" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "- \`$IMAGE_BASE/controller:pr-$PR\`" >> $GITHUB_STEP_SUMMARY
-        echo "- \`$IMAGE_BASE/server:pr-$PR\`" >> $GITHUB_STEP_SUMMARY
-        echo "- \`$IMAGE_BASE/web-hooks:pr-$PR\`" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "#### Pull them locally:" >> $GITHUB_STEP_SUMMARY
-        echo "\`\`\`sh" >> $GITHUB_STEP_SUMMARY
-        echo "docker pull $IMAGE_BASE/controller:pr-$PR" >> $GITHUB_STEP_SUMMARY
-        echo "docker pull $IMAGE_BASE/server:pr-$PR" >> $GITHUB_STEP_SUMMARY
-        echo "docker pull $IMAGE_BASE/web-hooks:pr-$PR" >> $GITHUB_STEP_SUMMARY
-        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "### 🚀 Docker Images Built for PR #$PR" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- \`$IMAGE_BASE/controller:pr-$PR\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`$IMAGE_BASE/server:pr-$PR\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`$IMAGE_BASE/web-hooks:pr-$PR\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "#### Pull them locally:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`sh" >> $GITHUB_STEP_SUMMARY
+          echo "docker pull $IMAGE_BASE/controller:pr-$PR" >> $GITHUB_STEP_SUMMARY
+          echo "docker pull $IMAGE_BASE/server:pr-$PR" >> $GITHUB_STEP_SUMMARY
+          echo "docker pull $IMAGE_BASE/web-hooks:pr-$PR" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
