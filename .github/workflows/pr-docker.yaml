@@ -67,6 +67,7 @@ jobs:
         labels: ${{ steps.extract-metadata.outputs.labels }}
 
   summary:
+    name: PR Docker Image Summary
     needs: build-on-label
     if: success()
     runs-on: ubuntu-22.04
