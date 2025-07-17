@@ -17,6 +17,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+    outputs:
+      pr-number: ${{ github.event.pull_request.number }}
 
     steps:
     - name: Checkout repository
