@@ -65,8 +65,8 @@ jobs:
         push: true
         tags: ${{ steps.extract-metadata.outputs.tags }}
         labels: ${{ steps.extract-metadata.outputs.labels }}
-    
-  summarize-images:
+
+  summary:
     needs: build-on-label
     if: success()
     runs-on: ubuntu-22.04
@@ -82,9 +82,3 @@ jobs:
           echo "- \`$IMAGE_BASE/server:pr-$PR\`" >> $GITHUB_STEP_SUMMARY
           echo "- \`$IMAGE_BASE/web-hooks:pr-$PR\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "#### Pull them locally:" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`sh" >> $GITHUB_STEP_SUMMARY
-          echo "docker pull $IMAGE_BASE/controller:pr-$PR" >> $GITHUB_STEP_SUMMARY
-          echo "docker pull $IMAGE_BASE/server:pr-$PR" >> $GITHUB_STEP_SUMMARY
-          echo "docker pull $IMAGE_BASE/web-hooks:pr-$PR" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
