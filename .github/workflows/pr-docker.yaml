@@ -2,7 +2,7 @@ name: Build Docker Test
 
 on:
   pull_request:
-    types: [labeled, closed]
+    types: [labeled]
 
 env:
   REGISTRY: ghcr.io
@@ -35,7 +35,7 @@ jobs:
     - name: Prepare repository name
       id: prepare-repository-name
       run: |
-        repository=$REGISTRY/${{ github.repository }}/pr-image/${{ matrix.workload }}
+        repository=$REGISTRY/cap-operator-sap/pr-image/${{ matrix.workload }}
         echo "repository=${repository,,}" >> $GITHUB_OUTPUT
 
     - name: Extract metadata (tags, labels) for Docker
@@ -63,25 +63,3 @@ jobs:
         push: true
         tags: ${{ steps.extract-metadata.outputs.tags }}
         labels: ${{ steps.extract-metadata.outputs.labels }}
-
-  cleanup:
-    if: github.event.action == 'closed'
-    strategy:
-      matrix:
-        workload: ["controller", "server", "web-hooks"]
-    runs-on: ubuntu-22.04
-    permissions:
-      contents: read
-      packages: write
-      # Needed for package deletion
-      id-token: write
-
-    steps:
-    - name: Delete older GHCR package versions for PR workload
-      uses: actions/delete-package-versions@v5
-      with:
-        package-name: cap-operator/pr-image/${{ matrix.workload }}
-        package-type: container
-        min-versions-to-keep: 0
-        delete-only-pre-release-versions: false
-        token: ${{ secrets.WKF_TOKEN }}
